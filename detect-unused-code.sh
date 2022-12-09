@@ -44,12 +44,12 @@ class_count=$(wc -l <"$file_class_path" | xargs)
 # write unused class names to results file
 while IFS= read -r class_path; do
   ((current_index=current_index+1))
-  class_name=$(basename "${class_path%.*}")
+  class_name=$(basename "${class_path%.*}") # rough assumption that class name and file name are the same
   printf "(%s/%s)\r" "$current_index" "$class_count"
-  result=$(grep -l -R "$class_name" "$path")
+  result=$(grep -l -R "$class_name" "$path") # rough assumption that all class names are unique
   count=$(echo "$result" | wc -l | xargs)
   if [[ "$count" -le max_occurrence ]]; then
-    printf "Class %s uses:\n%s\n\n" "$class_name" "$result" >>$file_results
+    printf "Class %s is used by:\n%s\n\n" "$class_name" "$result" >>$file_results
   fi
   printf "%s (%s)\n" "$class_name" "$count"
 done <$file_class_path
